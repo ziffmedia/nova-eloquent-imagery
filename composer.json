@@ -1,0 +1,49 @@
+{
+    "name": "ziffmedia/nova-eloquent-imagery",
+    "description": "Nova field for ziffmedia/laravel-eloquent-imagery",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Ralph Schindler",
+            "email": "ralph.schindler@ziffmedia.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.0",
+        "phpunit/phpunit": "^9.0",
+        "laravel/pint": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "ZiffMedia\\NovaEloquentImagery\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZiffMedia\\NovaEloquentImagery\\Test\\": "tests/"
+        }
+    },
+    "suggest": {
+        "ext-imagick": "Imagick image modifications",
+        "ext-gd": "GD Based image modifications",
+        "laravel/framework": "This package is intended to be used with laravel/framework version >= 5.7"
+    },
+    "conflict": {
+        "laravel/framework": "<5.7.0",
+        "laravel/nova": "<2.0.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ZiffMedia\\LaravelEloquentImagery\\EloquentImageryProvider"
+            ]
+        }
+    }
+}
