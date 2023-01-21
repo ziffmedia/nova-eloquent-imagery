@@ -1,9 +1,13 @@
-let mix = require('laravel-mix')
+const mix = require('laravel-mix')
 
-mix.setPublicPath('dist/')
+require('./nova.mix')
+
+mix
+  .setPublicPath('dist')
   .js('resources/js/nova.js', 'js')
+  .vue({ version: 3 })
+  .nova('nova-eloquent-imagery')
   .options({ terser: { extractComments: false } })
-  .vue()
 
 if (!mix.inProduction()) {
   mix.sourceMaps()

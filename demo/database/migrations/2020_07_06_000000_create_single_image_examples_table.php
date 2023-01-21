@@ -17,7 +17,7 @@ class CreateSingleImageExamplesTable extends Migration
             $table->id();
             $table->string('name');
             $table->json('variations');
-            $table->json('image');
+            $table->json('image')->nullable();
             $table->timestamps();
         });
     }

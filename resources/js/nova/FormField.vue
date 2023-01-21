@@ -1,38 +1,37 @@
 <template>
-  <default-field
+  <DefaultField
     :field="field"
     :errors="errors"
     :full-width-content="true"
-    :show-help-text="field.helpText != null"
+    :show-help-text="showHelpText"
   >
-    <template slot="field">
+    <template #field>
       <div
         class="flex flex-wrap mb-2 bg-white rounded-lg"
         :class="`nova-eloquent-imagery-${resourceName}`"
       >
         <template v-if="field.isCollection">
           <draggable
-            :value="imageCollection"
+            v-model="imageCollection"
+            item-key="id"
             class="flex flex-wrap mb-2"
             group="image-group"
             @update="handleImageCollectionUpdateOrder"
           >
-            <div
-              v-for="(image, index) in imageCollection"
-              :key="index"
-              :class="`border border-70 flex items-end m-1 nova-eloquent-imagery-image-${(index + 1)}`"
-            >
-              <image-card
-                :editable="true"
-                :metadata="image.metadata"
-                :metadata-form-configuration="field.metadataFormConfiguration"
-                :preview-url="image.previewUrl"
-                :thumbnail-url="image.thumbnailUrl"
-                @removeImage="handleImageCollectionRemoveImage(image)"
-                @replaceImage="handleImageCollectionReplaceImage(image, $event)"
-                @updateMetadata="handleImageCollectionUpdateMetadataForImage(image, $event)"
-              />
-            </div>
+            <template #item="{element}">
+              <div :class="`border border-70 flex items-end m-1 nova-eloquent-imagery-image-${ element.id }`">
+                <image-card
+                  :editable="true"
+                  :metadata="element.metadata"
+                  :metadata-form-configuration="field.metadataFormConfiguration"
+                  :preview-url="element.previewUrl"
+                  :thumbnail-url="element.thumbnailUrl"
+                  @removeImage="handleImageCollectionRemoveImage(element)"
+                  @replaceImage="handleImageCollectionReplaceImage(element, $event)"
+                  @updateMetadata="handleImageCollectionUpdateMetadataForImage(element, $event)"
+                />
+              </div>
+            </template>
           </draggable>
         </template>
         <template v-else>
@@ -75,7 +74,7 @@
         </div>
       </div>
     </template>
-  </default-field>
+  </DefaultField>
 </template>
 
 <script>
@@ -140,14 +139,10 @@ export default {
       this.imageCollection = this.$store.getters[`eloquentImagery/${this.field.attribute}/getImages`]
     } else {
       this.singleImage = this.field.value
-
-      if (this.singleImage) {
-        this.$set(this.singleImage, 'metadata', this.singleImage.metadata)
-      }
     }
   },
 
-  destroyed () {
+  unmounted () {
     if (this.field.isCollection) {
       this.$store.unregisterModule(`eloquentImagery/${this.field.attribute}`)
     }
@@ -170,20 +165,18 @@ export default {
 
     handleImageCollectionReplaceImage (image, file) {
       this.$store.dispatch(`eloquentImagery/${this.field.attribute}/replaceImageWithFile`, { id: image.id, file })
-        // .then(() => {
-        //   this.imageCollection = this.$store.getters[`eloquentImagery/${this.field.attribute}/getImages`]
-        // })
     },
 
     handleImageCollectionUpdateMetadataForImage (image, metadatas) {
-      this.$root.$store.dispatch(
+      this.$store.dispatch(
         `eloquentImagery/${this.field.attribute}/updateImageMetadata`,
         { id: image.id, metadatas, replace: true }
       )
     },
 
     handleImageCollectionUpdateOrder (dragEvent) {
-      this.$root.$store.dispatch(
+      debugger
+      this.$store.dispatch(
         `eloquentImagery/${this.field.attribute}/updateOrder`,
         { oldIndex: dragEvent.oldIndex, newIndex: dragEvent.newIndex }
       )
@@ -212,8 +205,7 @@ export default {
 
     handleUpdateMetadataForSingleImage (metadata) {
       const newm = metadata.reduce((o, m) => Object.assign(o, { [m.key]: m.value }), {})
-      this.$set(this.singleImage, 'metadata', newm)
-      // this.singleImage.metadata = newm
+      this.singleImage.metadata = newm
     },
 
     handleNewImageFromFileInput (file) {
@@ -231,7 +223,7 @@ export default {
           thumbnailUrl: imageUrl
         }
 
-        this.$set(this.singleImage, 'metadata', {})
+        this.singleImage.metadata = {}
 
         return new Promise((resolve, reject) => {
           const reader = new FileReader()

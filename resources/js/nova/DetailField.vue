@@ -1,6 +1,6 @@
 <template>
-  <panel-item :field="field">
-    <template slot="value">
+  <PanelItem :index="index" :field="field">
+    <template #value>
       <p v-if="(field.isCollection && field.value.images.length === 0) || (!field.isCollection && field.value === null)">
         —
       </p>
@@ -40,7 +40,7 @@
         </template>
       </div>
     </template>
-  </panel-item>
+  </PanelItem>
 </template>
 
 <script>
@@ -53,6 +53,10 @@ export default {
   },
 
   props: {
+    index: {
+      type: Number,
+      required: true
+    },
     field: {
       type: Object,
       required: true

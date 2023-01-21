@@ -9,12 +9,19 @@
             "email": "ralph.schindler@ziffmedia.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://nova.laravel.com"
+        }
+    ],
     "require": {
         "php": "^8.1"
     },
     "require-dev": {
         "orchestra/testbench": "^7.0",
         "phpunit/phpunit": "^9.0",
+        "laravel/nova": "^4.0",
         "laravel/pint": "^1.2"
     },
     "autoload": {
@@ -36,8 +43,7 @@
         "laravel/framework": "This package is intended to be used with laravel/framework version >= 5.7"
     },
     "conflict": {
-        "laravel/framework": "<5.7.0",
-        "laravel/nova": "<2.0.0"
+        "laravel/nova": "<4.0.0"
     },
     "extra": {
         "laravel": {

@@ -3,7 +3,7 @@ import Vue from 'vue'
 function createMetadata (metadata, requiredFields) {
   requiredFields.forEach(field => {
     if (!metadata[field]) {
-      Vue.set(metadata, field, '')
+      metadata.field = ''
     }
   })
 
@@ -27,8 +27,7 @@ export default function createImageCollectionStore () {
         state.fieldName = payload.fieldName
         state.requiredMetadataFields = payload.requiredMetadataFields ?? []
 
-        // this should keep images reactive (but it doesn't?)
-        Vue.set(state, 'images', payload.images.map((image, i) => {
+        state.images = payload.images.map((image, i) => {
           const storeImage = {
             ...image,
             id: 'eloquent-imagery-' + payload.fieldName + '-' + (i + 1)
@@ -39,14 +38,14 @@ export default function createImageCollectionStore () {
             state.requiredMetadataFields
           )
 
-          Vue.set(storeImage, 'metadata', metadata)
+          storeImage.metadata = metadata
 
           return storeImage
-        }))
+        })
       },
 
       updateImages (state, images) {
-        Vue.set(state, 'images', images)
+        state.images = images
       },
 
       updateImageAtIndex (state, { index, image }) {
@@ -68,7 +67,7 @@ export default function createImageCollectionStore () {
 
         const metadata = createMetadata(payload.metadata ?? {}, state.requiredMetadataFields)
 
-        Vue.set(image, 'metadata', metadata)
+        image.metadata = metadata
 
         const images = state.images
         images.push(image)
@@ -136,7 +135,7 @@ export default function createImageCollectionStore () {
           image.metadata[payload.key] = payload.value
         } else if (payload.metadatas && Array.isArray(payload.metadatas)) {
           if (payload.replace) {
-            Vue.set(image, 'metadata', {})
+            image.metadata = {}
           }
 
           payload.metadatas.forEach(metadata => {

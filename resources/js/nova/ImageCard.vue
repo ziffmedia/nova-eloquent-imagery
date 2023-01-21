@@ -9,18 +9,31 @@
       @click.prevent="isPreviewImageModalOpen = true"
     >
 
-    <portal
-      v-if="isPreviewImageModalOpen"
-      to="modals"
+    <Modal
+      data-testid="image-card-modal"
+      :show="isPreviewImageModalOpen"
+      modal-style="window"
+      @close-via-escape="handleClose"
     >
-      <modal @modal-close="handleClickaway">
-        <img
-          alt="An eloquent imagery image"
-          class="block mx-auto mb-4 sm:mb-0 sm:mr-4 sm:ml-0"
-          :src="previewUrl"
-        >
-      </modal>
-    </portal>
+      <img
+        alt="An eloquent imagery image"
+        class="block mx-auto mb-4 sm:mb-0 sm:mr-4 sm:ml-0"
+        :src="previewUrl"
+      >
+      <ModalFooter>
+        <div class="flex items-center ml-auto">
+          <CancelButton
+            component="button"
+            type="button"
+            dusk="cancel-action-button"
+            class="ml-auto mr-3"
+            @click="handleClose"
+          >
+            Close
+          </CancelButton>
+        </div>
+      </ModalFooter>
+    </Modal>
 
     <input
       v-if="editable"
@@ -81,122 +94,122 @@
       {{ metadataMessaging }}
     </div>
 
-    <portal
-      v-if="isMetadataModalOpen"
-      to="modals"
+    <Modal
+      data-testid="image-card-modal"
+      :show="isMetadataModalOpen"
+      modal-style="window"
+      @close-via-escape="handleClose"
     >
-      <modal>
-        <div class="w-screen">
-          <div
-            class="w-2/3 m-auto bg-white select-text"
-            style="min-height: 12em"
-          >
-            <div class="w-full p-8 m-2">
-              <h3 class="mb-2">
-                Image Metadata
-              </h3>
+      <div class="w-screen">
+        <div
+          class="w-2/3 m-auto bg-white select-text"
+          style="min-height: 12em"
+        >
+          <div class="w-full p-8 m-2">
+            <h3 class="mb-2">
+              Image Metadata
+            </h3>
 
-              <div
-                v-for="(metadataField, index) in metadataForm.fields"
-                :key="index"
-                class="w-full flex items-center"
-              >
-                <div class="w-1/3 pr-2 text-right font-bold">
-                  <template v-if="metadataField.isKeyEditable">
-                    <input
-                      v-if="editable"
-                      v-model="metadataField.key"
-                      type="text"
-                      class="w-full text-xs form-control form-input form-input-bordered m-1"
-                    >
-                    <span
-                      v-else
-                      class="w-full text-xs form-control form-input form-input-bordered m-1"
-                    >
-                      {{ metadataField.key }}
-                    </span>
-                  </template>
-                  <template v-else>
-                    {{ metadataField.label }}
-                  </template>
-                  <span
-                    v-if="metadataField.isRequired"
-                    class="text-danger-dark"
-                  >
-                    *
-                  </span>
-                </div>
-                <div class="w-full">
+            <div
+              v-for="(metadataField, index) in metadataForm.fields"
+              :key="index"
+              class="w-full flex items-center"
+            >
+              <div class="w-1/3 pr-2 text-right font-bold">
+                <template v-if="metadataField.isKeyEditable">
                   <input
                     v-if="editable"
-                    v-model="metadataForm.fields[index].value"
-                    class="w-full text-xs form-control form-input form-input-bordered my-1"
-                    required
+                    v-model="metadataField.key"
                     type="text"
+                    class="w-full text-xs form-control form-input form-input-bordered m-1"
                   >
                   <span
                     v-else
-                    class="w-full text-xs form-control form-input form-input-bordered my-1"
+                    class="w-full text-xs form-control form-input form-input-bordered m-1"
                   >
-                    {{ metadataForm.fields[index].value }}
+                    {{ metadataField.key }}
                   </span>
-                </div>
-                <div>
-                  <span
-                    v-if="editable && metadataField.isRemovable"
-                    class="cursor-pointer my-2 ml-2"
-                    @click.prevent="metadataForm.fields.splice(index, 1)"
+                </template>
+                <template v-else>
+                  {{ metadataField.label }}
+                </template>
+                <span
+                  v-if="metadataField.isRequired"
+                  class="text-danger-dark"
+                >
+                  *
+                </span>
+              </div>
+              <div class="w-full">
+                <input
+                  v-if="editable"
+                  v-model="metadataForm.fields[index].value"
+                  class="w-full text-xs form-control form-input form-input-bordered my-1"
+                  required
+                  type="text"
+                >
+                <span
+                  v-else
+                  class="w-full text-xs form-control form-input form-input-bordered my-1"
+                >
+                  {{ metadataForm.fields[index].value }}
+                </span>
+              </div>
+              <div>
+                <span
+                  v-if="editable && metadataField.isRemovable"
+                  class="cursor-pointer my-2 ml-2"
+                  @click.prevent="metadataForm.fields.splice(index, 1)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      width="24"
-                      height="24"
-                    >
-                      <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2zm0 2v14h14V5H5zm11 7a1 1 0 0 1-1 1H9a1 1 0 0 1 0-2h6a1 1 0 0 1 1 1z" />
-                    </svg>
-                  </span>
-                </div>
+                    <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2zm0 2v14h14V5H5zm11 7a1 1 0 0 1-1 1H9a1 1 0 0 1 0-2h6a1 1 0 0 1 1 1z" />
+                  </svg>
+                </span>
               </div>
             </div>
+          </div>
 
-            <button
-              v-if="editable && metadataForm.allowAddMetadata"
-              class="flex items-center mx-auto mt-2"
-              @click.prevent="handleAddMetadata"
+          <button
+            v-if="editable && metadataForm.allowAddMetadata"
+            class="flex items-center mx-auto mt-2"
+            @click.prevent="handleAddMetadata"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-              >
-                <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2zm0 2v14h14V5H5zm8 6h2a1 1 0 0 1 0 2h-2v2a1 1 0 0 1-2 0v-2H9a1 1 0 0 1 0-2h2V9a1 1 0 0 1 2 0v2z"/>
-              </svg>
-              <span class="ml-2">
-                Add Metadata
-              </span>
-            </button>
+              <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2zm0 2v14h14V5H5zm8 6h2a1 1 0 0 1 0 2h-2v2a1 1 0 0 1-2 0v-2H9a1 1 0 0 1 0-2h2V9a1 1 0 0 1 2 0v2z"/>
+            </svg>
+            <span class="ml-2">
+              Add Metadata
+            </span>
+          </button>
 
-            <div class="text-right mt-2 p-4">
-              <button
-                class="btn btn-link dim cursor-pointer text-80 ml-auto mr-6"
-                @click.prevent="handleCloseMetadataModal"
-              >
-                {{ editable ? 'Cancel' : 'Close' }}
-              </button>
-              <button
-                v-if="editable"
-                class="btn btn-default btn-primary inline-flex items-center relative"
-                @click.prevent="handleUpdateAndCloseMetadataModal"
-              >
-                Update &amp; Close
-              </button>
-            </div>
+          <div class="text-right mt-2 p-4">
+            <button
+              class="btn btn-link dim cursor-pointer text-80 ml-auto mr-6"
+              @click.prevent="handleCloseMetadataModal"
+            >
+              {{ editable ? 'Cancel' : 'Close' }}
+            </button>
+            <button
+              v-if="editable"
+              class="btn btn-default btn-primary inline-flex items-center relative"
+              @click.prevent="handleUpdateAndCloseMetadataModal"
+            >
+              Update &amp; Close
+            </button>
           </div>
         </div>
-      </modal>
-    </portal>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -291,7 +304,7 @@ export default {
       this.refreshMetadataForm()
     },
 
-    handleClickaway () {
+    handleClose () {
       this.isMetadataModalOpen = false
       this.isPreviewImageModalOpen = false
     },
