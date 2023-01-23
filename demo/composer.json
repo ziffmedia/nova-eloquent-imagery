@@ -11,10 +11,6 @@
         {
             "type": "composer",
             "url": "https://nova.laravel.com"
-        },
-        {
-            "type": "path",
-            "url": "./nova-components/Sample"
         }
     ],
     "require": {
@@ -24,8 +20,7 @@
         "laravel/nova": "^4.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "ziffmedia/laravel-eloquent-imagery": "dev-master",
-        "ziffmedia/sample": "*"
+        "ziffmedia/laravel-eloquent-imagery": "dev-master"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
