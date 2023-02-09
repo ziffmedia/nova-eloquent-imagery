@@ -48,7 +48,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ZiffMedia\\LaravelEloquentImagery\\EloquentImageryProvider"
+                "ZiffMedia\\NovaEloquentImagery\\EloquentImageryProvider"
             ]
         }
     }
