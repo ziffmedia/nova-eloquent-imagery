@@ -7,6 +7,9 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\KeyValue;
 use Laravel\Nova\Fields\Text;
 use ZiffMedia\NovaEloquentImagery\EloquentImageryField;
+use ZiffMedia\NovaEloquentImagery\Rules\MaxDimensions;
+use ZiffMedia\NovaEloquentImagery\Rules\MaxFileSize;
+use ZiffMedia\NovaEloquentImagery\Rules\ValidMimeTypes;
 
 class SingleImageExample extends Resource
 {
@@ -48,7 +51,8 @@ class SingleImageExample extends Resource
 
             KeyValue::make('Variations'),
 
-            EloquentImageryField::make('Image'),
+            EloquentImageryField::make('Image')
+                ->rules(new ValidMimeTypes(['image/png'])),
         ];
     }
 

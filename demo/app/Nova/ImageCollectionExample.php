@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use ZiffMedia\NovaEloquentImagery\EloquentImageryField;
+use ZiffMedia\NovaEloquentImagery\Rules\MaxFileSize;
 
 class ImageCollectionExample extends Resource
 {
@@ -45,7 +46,8 @@ class ImageCollectionExample extends Resource
 
             Text::make('Name'),
 
-            EloquentImageryField::make('Images'),
+            EloquentImageryField::make('Images')
+                ->rules(new MaxFileSize(1000)),
         ];
     }
 
