@@ -15,14 +15,4 @@ class SingleImageExample extends Model
         'image' => EloquentImageCast::class . ':single-image-examples/{id}.{extension}'
             . ',thumbnail=fit_resize|size_50x50|v'
     ];
-
-    // protected $eloquentImagery = [
-    //     'image' => [
-    //         'path'    => 'single-image-examples/{id}.{extension}',
-    //         'presets' => [
-    //             'thumbnail'   => 'fit_resize|size_50x50|v',
-    //             'timestamped' => 'v', // ?
-    //         ],
-    //     ],
-    // ];
 }
