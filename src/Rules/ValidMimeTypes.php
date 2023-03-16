@@ -26,6 +26,10 @@ class ValidMimeTypes implements InvokableRule
         $images = array_is_list($formData) ? $formData : [$formData];
 
         foreach ($images as $image) {
+            if (!isset($image['fileData'])) {
+                continue;
+            }
+
             $data = getimagesize($image['fileData']);
 
             if ($this->validMimeTypes->doesntContain($data['mime'])) {

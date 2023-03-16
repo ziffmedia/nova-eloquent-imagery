@@ -22,6 +22,10 @@ class MaxDimensions implements InvokableRule
         $images = array_is_list($formData) ? $formData : [$formData];
 
         foreach ($images as $image) {
+            if (!isset($image['fileData'])) {
+                continue;
+            }
+
             [$width, $height] = getimagesize($image['fileData']);
 
             if ($width > $this->maxWidth || $height > $this->maxHeight) {
