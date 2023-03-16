@@ -9,7 +9,8 @@ class ExactDimensions implements InvokableRule
     public function __construct(
         protected int $width,
         protected int $height
-    ) {}
+    ) {
+    }
 
     public function __invoke($attribute, $value, $fail)
     {
@@ -22,14 +23,14 @@ class ExactDimensions implements InvokableRule
         $images = array_is_list($formData) ? $formData : [$formData];
 
         foreach ($images as $image) {
-            if (!isset($image['fileData'])) {
+            if (! isset($image['fileData'])) {
                 continue;
             }
 
             [$width, $height] = getimagesize($image['fileData']);
 
             if ($width !== $this->width || $height !== $this->height) {
-                $fail($attribute.' is not the right size. Please submit an image that exactly '.$this->width.'px x '.$this->height.'px.');
+                $fail($attribute . ' is not the right size. Please submit an image that exactly ' . $this->width . 'px x ' . $this->height . 'px.');
             }
         }
     }

@@ -26,7 +26,7 @@ class ValidMimeTypes implements InvokableRule
         $images = array_is_list($formData) ? $formData : [$formData];
 
         foreach ($images as $image) {
-            if (!isset($image['fileData'])) {
+            if (! isset($image['fileData'])) {
                 continue;
             }
 

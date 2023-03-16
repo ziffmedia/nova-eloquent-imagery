@@ -72,8 +72,8 @@ class EloquentImageryField extends Field
         }
 
         return array_merge($meta, [
-            'value' => $value,
-            'isCollection' => $isCollection,
+            'value'                     => $value,
+            'isCollection'              => $isCollection,
             'metadataFormConfiguration' => collect(['fields' => [], 'allowAddMetadata' => true, 'preserveExistingMetadata' => true])
                 ->merge($this->metadataFormConfiguration)
                 ->mapWithKeys(fn ($value, $key) => [Str::camel($key) => $value])
@@ -103,7 +103,6 @@ class EloquentImageryField extends Field
     }
 
     /**
-     * @param $previewUrlModifiers
      * @return $this
      */
     public function previewUrlModifiers($previewUrlModifiers): static
@@ -114,7 +113,6 @@ class EloquentImageryField extends Field
     }
 
     /**
-     * @param $thumbnailUrlModifiers
      * @return $this
      */
     public function thumbnailUrlModifiers($thumbnailUrlModifiers): static
@@ -188,8 +186,6 @@ class EloquentImageryField extends Field
             ];
         }
 
-
         return $this->value->exists() ? $this->convertImageToResourceValue($this->value) : null;
-
     }
 }
