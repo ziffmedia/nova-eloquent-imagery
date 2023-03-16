@@ -31,7 +31,7 @@ class MaxFileSize implements InvokableRule
             $filesize = strlen(base64_decode($imageBase64));
 
             if ($filesize > $this->maxFileSize) {
-                $fail('File is too big. Please submit an image that is less than ' . $this->maxFileSize . ' bytes.');
+                $fail('The provided image is too big. Please submit an image that is less than ' . $this->maxFileSize . ' bytes.');
             }
         }
     }

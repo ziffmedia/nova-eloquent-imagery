@@ -30,7 +30,7 @@ class ExactDimensions implements InvokableRule
             [$width, $height] = getimagesize($image['fileData']);
 
             if ($width !== $this->width || $height !== $this->height) {
-                $fail($attribute . ' is not the right size. Please submit an image that exactly ' . $this->width . 'px x ' . $this->height . 'px.');
+                $fail('The provided image is not the right size. Please submit an image that is exactly ' . $this->width . 'px x ' . $this->height . 'px.');
             }
         }
     }

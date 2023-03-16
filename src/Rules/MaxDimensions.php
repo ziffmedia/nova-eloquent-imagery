@@ -30,7 +30,7 @@ class MaxDimensions implements InvokableRule
             [$width, $height] = getimagesize($image['fileData']);
 
             if ($width > $this->maxWidth || ($this->maxHeight > 0 && $height > $this->maxHeight)) {
-                $fail($attribute . ' is too big. Please submit an image that is less than or equal to ' . $this->maxWidth . 'px x ' . $this->maxHeight . 'px.');
+                $fail('The provided image is too big. Please submit an image that is less than or equal to ' . $this->maxWidth . 'px x ' . $this->maxHeight . 'px.');
             }
         }
     }
