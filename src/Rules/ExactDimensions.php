@@ -3,18 +3,13 @@
 namespace ZiffMedia\NovaEloquentImagery\Rules;
 
 use Illuminate\Contracts\Validation\InvokableRule;
-use InvalidArgumentException;
 
-class MaxDimensions implements InvokableRule
+class ExactDimensions implements InvokableRule
 {
     public function __construct(
-        protected ?int $maxWidth = null,
-        protected ?int $maxHeight = null
-    ) {
-        if ($this->maxWidth === null && $this->maxHeight === null) {
-            throw new InvalidArgumentException('One of $maxWidth or $maxHeight is required');
-        }
-    }
+        protected int $width,
+        protected int $height
+    ) {}
 
     public function __invoke($attribute, $value, $fail)
     {
@@ -33,8 +28,8 @@ class MaxDimensions implements InvokableRule
 
             [$width, $height] = getimagesize($image['fileData']);
 
-            if ($width > $this->maxWidth || ($this->maxHeight > 0 && $height > $this->maxHeight)) {
-                $fail($attribute.' is too big. Please submit an image that is less than or equal to '.$this->maxWidth.'px x '.$this->maxHeight.'px.');
+            if ($width !== $this->width || $height !== $this->height) {
+                $fail($attribute.' is not the right size. Please submit an image that exactly '.$this->width.'px x '.$this->height.'px.');
             }
         }
     }
