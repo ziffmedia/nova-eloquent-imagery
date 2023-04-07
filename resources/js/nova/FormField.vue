@@ -154,7 +154,7 @@ export default {
         ? this.$store.getters[`eloquentImagery/${this.field.attribute}/serialize`]
         : this.singleImage
 
-      formData.append(this.field.attribute, JSON.stringify(value))
+      formData.append(this.field.attribute, value !== null ? JSON.stringify(value) : '')
     },
 
     handleImageCollectionRemoveImage (image) {
