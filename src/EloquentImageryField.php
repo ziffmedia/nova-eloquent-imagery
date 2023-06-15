@@ -136,7 +136,8 @@ class EloquentImageryField extends Field
             $image->setData($formData['fileData']);
         }
 
-        $image->metadata = new Collection($formData['metadata'] ?? []);
+        $image->metadata->splice(0);
+        $image->metadata->merge($formData['metadata']);
     }
 
     protected function resolveImageCollectionFromFormData(array $formData, ImageCollection $imageCollection): void
@@ -163,7 +164,8 @@ class EloquentImageryField extends Field
             }
 
             // store the metadata
-            $image->metadata = new Collection($imageData['metadata']);
+            $image->metadata->splice(0);
+            $image->metadata->merge($imageData['metadata']);
 
             $newCollectionForImages[$imageIndex] = $image;
         }
@@ -186,6 +188,8 @@ class EloquentImageryField extends Field
             ];
         }
 
-        return $this->value->exists() ? $this->convertImageToResourceValue($this->value) : null;
+        return $this->value instanceof Image && $this->value->exists()
+            ? $this->convertImageToResourceValue($this->value)
+            : null;
     }
 }
