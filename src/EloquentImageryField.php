@@ -54,21 +54,23 @@ class EloquentImageryField extends Field
     {
         $meta = $this->meta;
 
-        if ($this->value instanceof ImageCollection) {
+        $attrValue = $this->resource->{$this->attribute};
+
+        if ($attrValue instanceof ImageCollection) {
             $isCollection = true;
 
             $value = [
-                'autoincrement' => $this->value->getAutoincrement(),
+                'autoincrement' => $attrValue->getAutoincrement(),
                 'images'        => [],
             ];
 
-            foreach ($this->value as $image) {
+            foreach ($attrValue as $image) {
                 $value['images'][] = $this->convertImageToResourceValue($image);
             }
         } else {
             $isCollection = false;
 
-            $value = ($this->value->exists()) ? $this->convertImageToResourceValue($this->value) : null;
+            $value = $attrValue->exists() ? $this->convertImageToResourceValue($attrValue) : null;
         }
 
         return array_merge($meta, [
@@ -181,15 +183,15 @@ class EloquentImageryField extends Field
 
     public function resolveDependentValue(NovaRequest $request)
     {
-        if ($this->value instanceof ImageCollection) {
+        $attrValue = $this->resource->{$this->attribute};
+
+        if ($attrValue instanceof ImageCollection) {
             return [
-                'autoincrement' => $this->value->getAutoincrement(),
-                'images'        => $this->value->map(fn (Image $image) => $this->convertImageToResourceValue($image))->toArray(),
+                'autoincrement' => $attrValue->getAutoincrement(),
+                'images'        => $attrValue->map(fn (Image $image) => $this->convertImageToResourceValue($image))->toArray(),
             ];
         }
 
-        return $this->value instanceof Image && $this->value->exists()
-            ? $this->convertImageToResourceValue($this->value)
-            : null;
+        return $attrValue->exists() ? $this->convertImageToResourceValue($attrValue) : null;
     }
 }
