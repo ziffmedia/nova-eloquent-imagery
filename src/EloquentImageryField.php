@@ -138,8 +138,13 @@ class EloquentImageryField extends Field
             $image->setData($formData['fileData']);
         }
 
-        $image->metadata->splice(0);
-        $image->metadata->merge($formData['metadata']);
+        $metadata = $image->metadata;
+
+        $metadata->splice(0);
+
+        foreach ($formData['metadata'] as $k => $v) {
+            $metadata[$k] = $v;
+        }
     }
 
     protected function resolveImageCollectionFromFormData(array $formData, ImageCollection $imageCollection): void
@@ -165,9 +170,12 @@ class EloquentImageryField extends Field
                 $image->setData($imageData['fileData']);
             }
 
-            // store the metadata
-            $image->metadata->splice(0);
-            $image->metadata->merge($imageData['metadata']);
+            // clear existing and store the metadata
+            $metadata->splice(0);
+
+            foreach ($imageData['metadata'] as $k => $v) {
+                $metadata[$k] = $v;
+            }
 
             $newCollectionForImages[$imageIndex] = $image;
         }
