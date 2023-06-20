@@ -171,6 +171,8 @@ class EloquentImageryField extends Field
             }
 
             // clear existing and store the metadata
+            $metadata = $image->metadata;
+
             $metadata->splice(0);
 
             foreach ($imageData['metadata'] as $k => $v) {
