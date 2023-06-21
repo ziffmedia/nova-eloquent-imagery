@@ -193,6 +193,10 @@ class EloquentImageryField extends Field
 
     public function resolveDependentValue(NovaRequest $request)
     {
+        if (! $this->resource) {
+            return null;
+        }
+
         $attrValue = $this->resource->{$this->attribute};
 
         if ($attrValue instanceof ImageCollection) {
