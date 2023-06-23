@@ -1,6 +1,6 @@
 <template>
   <DefaultField
-    :field="field"
+    :field="currentField"
     :errors="errors"
     :full-width-content="true"
     :show-help-text="showHelpText"
@@ -10,7 +10,7 @@
         class="flex flex-wrap mb-2 bg-white rounded-lg dark:bg-gray-800"
         :class="`nova-eloquent-imagery-${resourceName}`"
       >
-        <template v-if="field.isCollection">
+        <template v-if="currentField.isCollection">
           <draggable
             v-model="imageCollection"
             item-key="id"
@@ -20,10 +20,11 @@
           >
             <template #item="{element}">
               <div :class="`border border-70 flex items-end m-1 nova-eloquent-imagery-image-${ element.id }`">
+
                 <image-card
-                  :editable="true"
+                  :editable="!currentlyIsReadonly"
                   :metadata="element.metadata"
-                  :metadata-form-configuration="field.metadataFormConfiguration"
+                  :metadata-form-configuration="currentField.metadataFormConfiguration"
                   :preview-url="element.previewUrl"
                   :thumbnail-url="element.thumbnailUrl"
                   @removeImage="handleImageCollectionRemoveImage(element)"
@@ -37,9 +38,9 @@
         <template v-else>
           <image-card
             v-if="singleImage"
-            :editable="true"
+            :editable="!currentlyIsReadonly"
             :metadata="singleImage.metadata"
-            :metadata-form-configuration="field.metadataFormConfiguration"
+            :metadata-form-configuration="currentField.metadataFormConfiguration"
             :preview-url="singleImage.previewUrl"
             :thumbnail-url="singleImage.thumbnailUrl"
             @removeImage="handleRemoveSingleImage"
@@ -53,7 +54,7 @@
           class="content-center px-6 py-4"
         >
           <input
-            :id="`eloquent-imagery-` + field.name + `-add-image`"
+            :id="`eloquent-imagery-` + currentField.name + `-add-image`"
             ref="uploadNewImageFromFileInput"
             class="select-none form-file-input"
             type="file"
@@ -62,6 +63,7 @@
           >
 
           <span
+            v-if="!currentlyIsReadonly"
             class="cursor-pointer"
             @click.prevent="$refs['uploadNewImageFromFileInput'].click()"
           >
@@ -78,7 +80,7 @@
 </template>
 
 <script>
-import { FormField, HandlesValidationErrors } from 'laravel-nova'
+import { DependentFormField, HandlesValidationErrors } from 'laravel-nova'
 import Draggable from 'vuedraggable'
 import ImageCard from './ImageCard'
 
@@ -91,7 +93,7 @@ export default {
   },
 
   mixins: [
-    FormField,
+    DependentFormField,
     HandlesValidationErrors
   ],
 
@@ -118,66 +120,65 @@ export default {
   },
 
   created () {
-    if (this.field.isCollection) {
-      this.$store.registerModule(`eloquentImagery/${this.field.attribute}`, createImageCollectionStore())
+    if (this.currentField.isCollection) {
+      this.$store.registerModule(`eloquentImagery/${this.currentField.attribute}`, createImageCollectionStore())
 
       const requiredMetadataFields = []
 
-      this.field.metadataFormConfiguration.fields.forEach(field => {
+      this.currentField.metadataFormConfiguration.fields.forEach(field => {
         if (field.required) {
           requiredMetadataFields.push(field.key)
         }
       })
 
-      this.$store.commit(`eloquentImagery/${this.field.attribute}/initialize`, {
+      this.$store.commit(`eloquentImagery/${this.currentField.attribute}/initialize`, {
         isReadOnly: false,
-        fieldName: this.field.attribute,
-        images: this.field.value.images,
+        fieldName: this.currentField.attribute,
+        images: this.currentField.value.images,
         requiredMetadataFields
       })
 
-      this.imageCollection = this.$store.getters[`eloquentImagery/${this.field.attribute}/getImages`]
+      this.imageCollection = this.$store.getters[`eloquentImagery/${this.currentField.attribute}/getImages`]
     } else {
       this.singleImage = this.field.value
     }
   },
 
   unmounted () {
-    if (this.field.isCollection) {
-      this.$store.unregisterModule(`eloquentImagery/${this.field.attribute}`)
+    if (this.currentField.isCollection) {
+      this.$store.unregisterModule(`eloquentImagery/${this.currentField.attribute}`)
     }
   },
 
   methods: {
     fill (formData) {
-      const value = (this.field.isCollection)
-        ? this.$store.getters[`eloquentImagery/${this.field.attribute}/serialize`]
+      const value = (this.currentField.isCollection)
+        ? this.$store.getters[`eloquentImagery/${this.currentField.attribute}/serialize`]
         : this.singleImage
 
-      formData.append(this.field.attribute, value !== null ? JSON.stringify(value) : '')
+      formData.append(this.currentField.attribute, value !== null ? JSON.stringify(value) : '')
     },
 
     handleImageCollectionRemoveImage (image) {
-      this.$store.dispatch(`eloquentImagery/${this.field.attribute}/removeImage`, image)
+      this.$store.dispatch(`eloquentImagery/${this.currentField.attribute}/removeImage`, image)
 
-      this.imageCollection = this.$store.getters[`eloquentImagery/${this.field.attribute}/getImages`]
+      this.imageCollection = this.$store.getters[`eloquentImagery/${this.currentField.attribute}/getImages`]
     },
 
     handleImageCollectionReplaceImage (image, file) {
-      this.$store.dispatch(`eloquentImagery/${this.field.attribute}/replaceImageWithFile`, { id: image.id, file })
+      this.$store.dispatch(`eloquentImagery/${this.currentField.attribute}/replaceImageWithFile`, { id: image.id, file })
     },
 
     handleImageCollectionUpdateMetadataForImage (image, metadatas) {
       this.$store.dispatch(
-        `eloquentImagery/${this.field.attribute}/updateImageMetadata`,
+        `eloquentImagery/${this.currentField.attribute}/updateImageMetadata`,
         { id: image.id, metadatas, replace: true }
       )
     },
 
     handleImageCollectionUpdateOrder (dragEvent) {
-      debugger
       this.$store.dispatch(
-        `eloquentImagery/${this.field.attribute}/updateOrder`,
+        `eloquentImagery/${this.currentField.attribute}/updateOrder`,
         { oldIndex: dragEvent.oldIndex, newIndex: dragEvent.newIndex }
       )
     },
@@ -209,16 +210,16 @@ export default {
     },
 
     handleNewImageFromFileInput (file) {
-      if (this.field.isCollection) {
-        this.$store.dispatch(`eloquentImagery/${this.field.attribute}/addImageFromFile`, { file })
+      if (this.currentField.isCollection) {
+        this.$store.dispatch(`eloquentImagery/${this.currentField.attribute}/addImageFromFile`, { file })
           .then(() => {
-            this.imageCollection = this.$store.getters[`eloquentImagery/${this.field.attribute}/getImages`]
+            this.imageCollection = this.$store.getters[`eloquentImagery/${this.currentField.attribute}/getImages`]
           })
       } else {
         const imageUrl = URL.createObjectURL(file)
 
         this.singleImage = {
-          id: this.field.attribute,
+          id: this.currentField.attribute,
           previewUrl: imageUrl,
           thumbnailUrl: imageUrl
         }

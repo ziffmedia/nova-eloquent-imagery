@@ -52,7 +52,9 @@ class SingleImageExample extends Resource
             KeyValue::make('Variations'),
 
             EloquentImageryField::make('Image')
-                ->rules(new ValidMimeTypes(['image/png'])),
+                ->rules(new ValidMimeTypes(['image/png', 'image/jpeg']))
+                // ->readonly()
+            ,
         ];
     }
 
