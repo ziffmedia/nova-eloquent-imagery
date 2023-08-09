@@ -13,6 +13,7 @@
       data-testid="image-card-modal"
       :show="isPreviewImageModalOpen"
       modal-style="window"
+      size="4xl"
       @close-via-escape="handleClose"
       class="bg-gray-100 dark:bg-gray-700 px-6"
     >
@@ -103,11 +104,12 @@
       data-testid="image-card-modal"
       :show="isMetadataModalOpen"
       modal-style="window"
+      size="4xl"
       @close-via-escape="handleClose"
     >
       <div class="w-screen">
         <div
-          class="w-2/3 m-auto bg-white select-text dark:bg-gray-800"
+          class="m-auto bg-white select-text dark:bg-gray-800"
           style="min-height: 12em"
         >
           <div class="w-full p-8 m-2">
@@ -120,7 +122,7 @@
               :key="index"
               class="w-full flex items-center"
             >
-              <div class="w-1/3 pr-2 text-right font-bold">
+              <div class="pr-2 text-right font-bold" style="width: 33%">
                 <template v-if="metadataField.isKeyEditable">
                   <input
                     v-if="editable"
