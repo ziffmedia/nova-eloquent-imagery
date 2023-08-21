@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use RuntimeException;
 use ZiffMedia\LaravelEloquentImagery\Eloquent\Image;
 use ZiffMedia\LaravelEloquentImagery\Eloquent\ImageCollection;
 
@@ -21,7 +22,7 @@ class EloquentImageryField extends Field
 
     protected $previewUrlModifiers;
 
-    protected function fillAttribute(NovaRequest $request, $requestAttribute, $model, $attribute)
+    protected function fillAttribute(NovaRequest $request, $requestAttribute, $model, $attribute): void
     {
         if (! $request->exists($requestAttribute)) {
             return;
@@ -33,7 +34,7 @@ class EloquentImageryField extends Field
         $fieldAttribute = $model->{$attribute};
 
         if (! $fieldAttribute instanceof Image && ! $fieldAttribute instanceof ImageCollection) {
-            throw new \RuntimeException('Field must be an EloquentImagery field');
+            throw new RuntimeException('Field must be an EloquentImagery field');
         }
 
         ($fieldAttribute instanceof ImageCollection)
@@ -43,14 +44,14 @@ class EloquentImageryField extends Field
         $fieldAttribute->updatePath([], $model);
     }
 
-    public function withMetadataFormConfiguration(array $metadataFormConfiguration)
+    public function withMetadataFormConfiguration(array $metadataFormConfiguration): static
     {
         $this->metadataFormConfiguration = $metadataFormConfiguration;
 
         return $this;
     }
 
-    public function meta()
+    public function meta(): array
     {
         $meta = $this->meta;
 
@@ -91,6 +92,7 @@ class EloquentImageryField extends Field
     protected function convertImageToResourceValue(Image $image): array
     {
         return [
+            'id' => $image->id,
             'previewUrl' => $image->url(
                 ($this->previewUrlModifiers ? $this->previewUrlModifiers . '|' : '')
                 . 'v' . $image->timestamp
@@ -104,9 +106,6 @@ class EloquentImageryField extends Field
         ];
     }
 
-    /**
-     * @return $this
-     */
     public function previewUrlModifiers($previewUrlModifiers): static
     {
         $this->previewUrlModifiers = $previewUrlModifiers;
@@ -114,9 +113,6 @@ class EloquentImageryField extends Field
         return $this;
     }
 
-    /**
-     * @return $this
-     */
     public function thumbnailUrlModifiers($thumbnailUrlModifiers): static
     {
         $this->thumbnailUrlModifiers = $thumbnailUrlModifiers;
@@ -134,8 +130,10 @@ class EloquentImageryField extends Field
             return;
         }
 
+        // upload new data, preserving the frontend created ulid id
         if (isset($formData['fileData'])) {
             $image->setData($formData['fileData']);
+            $image->setId($formData['id']);
         }
 
         $metadata = $image->metadata;
@@ -168,6 +166,7 @@ class EloquentImageryField extends Field
             // if bytes were provided, set them
             if (isset($imageData['fileData'])) {
                 $image->setData($imageData['fileData']);
+                $image->setId($imageData['id']);
             }
 
             // clear existing and store the metadata

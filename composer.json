@@ -10,10 +10,13 @@
         }
     ],
     "repositories": [
-        {
-            "type": "composer",
-            "url": "https://nova.laravel.com"
-        }
+      {
+        "type": "composer",
+        "url": "https://repo.packagist.com/ziffdavis/"
+      },
+      {
+        "packagist.org": false
+      }
     ],
     "require": {
         "php": "^8.1"

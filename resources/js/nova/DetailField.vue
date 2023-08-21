@@ -85,7 +85,7 @@ export default {
     }
   },
 
-  destroyed () {
+  beforeUnmount () {
     if (this.field.isCollection) {
       this.$store.unregisterModule(`eloquentImagery/${this.field.attribute}`)
     }

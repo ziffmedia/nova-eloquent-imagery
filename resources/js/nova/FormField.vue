@@ -59,7 +59,7 @@
             class="select-none form-file-input"
             type="file"
             name="name"
-            @change="handleNewImageFromFileInput($event.target.files[0])"
+            @change.prevent="handleNewImageFromFileInput($event.target.files[0])"
           >
 
           <span
@@ -85,6 +85,7 @@ import Draggable from 'vuedraggable'
 import ImageCard from './ImageCard'
 
 import createImageCollectionStore from './createImageCollectionStore'
+import { ulid } from 'ulid'
 
 export default {
   components: {
@@ -144,7 +145,7 @@ export default {
     }
   },
 
-  unmounted () {
+  beforeUnmount () {
     if (this.currentField.isCollection) {
       this.$store.unregisterModule(`eloquentImagery/${this.currentField.attribute}`)
     }
@@ -186,6 +187,7 @@ export default {
     handleReplaceSingleImage (file) {
       const imageUrl = URL.createObjectURL(file)
 
+      this.singleImage.id = ulid().toLowerCase()
       this.singleImage.previewUrl = imageUrl
       this.singleImage.thumbnailUrl = imageUrl
 
@@ -205,8 +207,9 @@ export default {
     },
 
     handleUpdateMetadataForSingleImage (metadata) {
-      const newm = metadata.reduce((o, m) => Object.assign(o, { [m.key]: m.value }), {})
-      this.singleImage.metadata = newm
+      this.singleImage.metadata = metadata.reduce(
+        (o, m) => Object.assign(o, { [m.key]: m.value }), {}
+      )
     },
 
     handleNewImageFromFileInput (file) {
@@ -219,7 +222,7 @@ export default {
         const imageUrl = URL.createObjectURL(file)
 
         this.singleImage = {
-          id: this.currentField.attribute,
+          id: ulid().toLowerCase(),
           previewUrl: imageUrl,
           thumbnailUrl: imageUrl
         }

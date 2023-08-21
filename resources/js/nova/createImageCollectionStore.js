@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { ulid } from 'ulid'
 
 function createMetadata (metadata, requiredFields) {
   requiredFields.forEach(field => {
@@ -29,8 +29,8 @@ export default function createImageCollectionStore () {
 
         state.images = payload.images.map((image, i) => {
           const storeImage = {
-            ...image,
-            id: 'eloquent-imagery-' + payload.fieldName + '-' + (i + 1)
+            ...image
+            // id: ulid().toLowerCase()
           }
 
           const metadata = createMetadata(
@@ -55,7 +55,7 @@ export default function createImageCollectionStore () {
 
     actions: {
       addImageFromFile ({ state, commit }, payload) {
-        const id = 'eloquent-imagery-' + state.fieldName + '-' + (state.images.length + 1)
+        const id = ulid().toLowerCase()
 
         const imageUrl = URL.createObjectURL(payload.file)
 
@@ -100,6 +100,7 @@ export default function createImageCollectionStore () {
 
         const imageUrl = URL.createObjectURL(payload.file)
 
+        image.id = ulid().toLowerCase()
         image.previewUrl = imageUrl
         image.thumbnailUrl = imageUrl
 
@@ -195,6 +196,7 @@ export default function createImageCollectionStore () {
       serialize: (state) => {
         return state.images.map(image => {
           return {
+            id: image.id,
             metadata: image.metadata,
             path: image.path ?? null,
             ...(image.fileData ? { fileData: image.fileData } : {})

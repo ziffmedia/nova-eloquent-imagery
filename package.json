@@ -20,7 +20,6 @@
         "laravel-mix": "^6.0.41",
         "lodash": "^4.17.21",
         "vue-loader": "^16.8.3",
-        "vuedraggable": "^4.1.0",
-        "vuex": "^4.1.0"
+        "vuedraggable": "^4.1.0"
     }
 }
