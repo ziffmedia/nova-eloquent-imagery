@@ -190,7 +190,7 @@ class EloquentImageryField extends Field
         $imageCollection->replaceWrappedCollectionForImages($newCollectionForImages);
     }
 
-    public function resolveDependentValue(NovaRequest $request)
+    public function resolveDependentValue(NovaRequest $request): mixed
     {
         if (! $this->resource) {
             return null;
